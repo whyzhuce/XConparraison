@@ -1,10 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'xconparraison.ui'
-#
-# Created by: PyQt4 UI code generator 4.11.4
-#
-# WARNING! All changes made in this file will be lost!
+import os
 from pandas import read_excel
 from PyQt4 import QtCore, QtGui
 Qt = QtCore.Qt
@@ -37,89 +33,116 @@ def column_string(n):
 class Ui_XConparraison(object):
     def setupUi(self, XConparraison):
         XConparraison.setObjectName(_fromUtf8("XConparraison"))
-        XConparraison.resize(834, 609)
+        XConparraison.resize(900, 600)
         self.centralwidget = QtGui.QWidget(XConparraison)
         self.centralwidget.setObjectName(_fromUtf8("centralwidget"))
-        self.gridLayout_4 = QtGui.QGridLayout(self.centralwidget)
-        self.gridLayout_4.setObjectName(_fromUtf8("gridLayout_4"))
-        self.gridLayout_3 = QtGui.QGridLayout()
-        self.gridLayout_3.setObjectName(_fromUtf8("gridLayout_3"))
-        self.gridLayout = QtGui.QGridLayout()
-        self.gridLayout.setObjectName(_fromUtf8("gridLayout"))
-        self.splitter = QtGui.QSplitter(self.centralwidget)
-        self.splitter.setOrientation(QtCore.Qt.Horizontal)
-        self.splitter.setObjectName(_fromUtf8("splitter"))
-        self.widget = QtGui.QWidget(self.splitter)
-        self.widget.setObjectName(_fromUtf8("widget"))
-        self.verticalLayout = QtGui.QVBoxLayout(self.widget)
-        self.verticalLayout.setObjectName(_fromUtf8("verticalLayout"))
-        spacerItem = QtGui.QSpacerItem(153, 13, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
-        self.verticalLayout.addItem(spacerItem)
-        self.leftInput = QtGui.QLineEdit(self.widget)
+        self.mainGrid = QtGui.QVBoxLayout(self.centralwidget)
+        self.mainGrid.setObjectName(_fromUtf8("mainGrid"))
+
+        self.leftInput = QtGui.QLineEdit()
         self.leftInput.setObjectName(_fromUtf8("leftInput"))
-        self.verticalLayout.addWidget(self.leftInput)
-        spacerItem1 = QtGui.QSpacerItem(20, 13, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
-        self.verticalLayout.addItem(spacerItem1)
-        self.CmpValue = QtGui.QPushButton(self.splitter)
-        self.CmpValue.setObjectName(_fromUtf8("CmpValue"))
-        self.gridLayout.addWidget(self.splitter, 0, 0, 1, 1)
-        self.leftSelect = QtGui.QComboBox(self.centralwidget)
+        self.leftBrowse = QtGui.QToolButton()
+        self.leftBrowse.setObjectName(_fromUtf8("leftBrowse"))
+        leftinputLayout = QtGui.QHBoxLayout()
+        leftinputLayout.setSpacing(0)
+        leftinputLayout.addWidget(self.leftInput)
+        leftinputLayout.addWidget(self.leftBrowse)
+        self.leftSelect = QtGui.QComboBox()
         self.leftSelect.setObjectName(_fromUtf8("leftSelect"))
-        self.gridLayout.addWidget(self.leftSelect, 1, 0, 1, 1)
-        self.leftTbl = QtGui.QTableView(self.centralwidget)
-        self.leftTbl.setObjectName(_fromUtf8("leftTbl"))
-        self.gridLayout.addWidget(self.leftTbl, 2, 0, 1, 1)
-        self.gridLayout_3.addLayout(self.gridLayout, 0, 0, 1, 1)
-        self.gridLayout_2 = QtGui.QGridLayout()
-        self.gridLayout_2.setObjectName(_fromUtf8("gridLayout_2"))
-        self.rightSelect = QtGui.QComboBox(self.centralwidget)
-        self.rightSelect.setObjectName(_fromUtf8("rightSelect"))
-        self.gridLayout_2.addWidget(self.rightSelect, 1, 0, 1, 1)
-        self.rightTbl = QtGui.QTableView(self.centralwidget)
-        self.rightTbl.setObjectName(_fromUtf8("rightTbl"))
-        self.gridLayout_2.addWidget(self.rightTbl, 2, 0, 1, 1)
-        self.splitter_2 = QtGui.QSplitter(self.centralwidget)
-        self.splitter_2.setOrientation(QtCore.Qt.Horizontal)
-        self.splitter_2.setObjectName(_fromUtf8("splitter_2"))
-        self.CmpFormula = QtGui.QPushButton(self.splitter_2)
+        leftselectLayout = QtGui.QVBoxLayout()
+        leftselectLayout.setObjectName(_fromUtf8("leftselectLayout"))
+        leftselectLayout.addLayout(leftinputLayout)
+        leftselectLayout.addWidget(self.leftSelect)
+        self.CmpValue = QtGui.QPushButton()
+        self.CmpValue.setObjectName(_fromUtf8("CmpValue"))
+        self.CmpValue.setSizePolicy(QtGui.QSizePolicy.Preferred, QtGui.QSizePolicy.Preferred)
+        self.CmpFormula = QtGui.QPushButton()
         self.CmpFormula.setObjectName(_fromUtf8("CmpFormula"))
-        self.layoutWidget_2 = QtGui.QWidget(self.splitter_2)
-        self.layoutWidget_2.setObjectName(_fromUtf8("layoutWidget_2"))
-        self.verticalLayout_2 = QtGui.QVBoxLayout(self.layoutWidget_2)
-        self.verticalLayout_2.setObjectName(_fromUtf8("verticalLayout_2"))
-        spacerItem2 = QtGui.QSpacerItem(153, 13, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
-        self.verticalLayout_2.addItem(spacerItem2)
-        self.rightInput = QtGui.QLineEdit(self.layoutWidget_2)
+        self.CmpFormula.setSizePolicy(QtGui.QSizePolicy.Preferred, QtGui.QSizePolicy.Preferred)
+        self.rightInput = QtGui.QLineEdit()
         self.rightInput.setObjectName(_fromUtf8("rightInput"))
-        self.verticalLayout_2.addWidget(self.rightInput)
-        spacerItem3 = QtGui.QSpacerItem(20, 13, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
-        self.verticalLayout_2.addItem(spacerItem3)
-        self.gridLayout_2.addWidget(self.splitter_2, 0, 0, 1, 1)
-        self.gridLayout_3.addLayout(self.gridLayout_2, 0, 1, 1, 1)
-        self.gridLayout_4.addLayout(self.gridLayout_3, 0, 0, 1, 1)
+        self.rightBrowse = QtGui.QToolButton()
+        self.rightBrowse.setObjectName(_fromUtf8("rightBrowse"))
+        rightinputLayout = QtGui.QHBoxLayout()
+        rightinputLayout.setSpacing(0)
+        rightinputLayout.addWidget(self.rightInput)
+        rightinputLayout.addWidget(self.rightBrowse)
+        self.rightSelect = QtGui.QComboBox()
+        self.rightSelect.setObjectName(_fromUtf8("rightSelect"))
+        rightselectLayout = QtGui.QVBoxLayout()
+        rightselectLayout.setObjectName(_fromUtf8("rightselectLayout"))
+        rightselectLayout.addLayout(rightinputLayout)
+        rightselectLayout.addWidget(self.rightSelect)
+        self.tools = QtGui.QWidget()
+        self.tools.setObjectName(_fromUtf8("tools"))
+        self.tools.setFixedWidth(100)
+        self.hideEqual = QtGui.QCheckBox("Hide Equal Cells", self.tools)
+        self.hideEqual.setObjectName(_fromUtf8("hideEqual"))
+
+        self.inputWidget = QtGui.QWidget()
+        self.inputWidget.setObjectName(_fromUtf8("inputWidget"))
+        inputGrid = QtGui.QHBoxLayout(self.inputWidget)
+        inputGrid.addLayout(leftselectLayout)
+        inputGrid.addWidget(self.CmpValue)
+        inputGrid.addWidget(self.CmpFormula)
+        inputGrid.addLayout(rightselectLayout)
+        inputGrid.addWidget(self.tools)
+        self.inputWidget.setFixedHeight(70)
+
+        self.leftTbl = QtGui.QTableView()
+        self.leftTbl.setObjectName(_fromUtf8("leftTbl"))
+        self.rightTbl = QtGui.QTableView()
+        self.rightTbl.setObjectName(_fromUtf8("rightTbl"))
+        self.minimap = QtGui.QTableView()
+        self.minimap.setObjectName(_fromUtf8("minimap"))
+        self.minimap.setFixedWidth(110)
+        self.tables = QtGui.QSplitter(Qt.Horizontal)
+        self.tables.addWidget(self.leftTbl)
+        self.tables.addWidget(self.rightTbl)
+        self.tables.addWidget(self.minimap)
+
+        self.mainGrid.addWidget(self.inputWidget)
+        self.mainGrid.addWidget(self.tables)
+
         XConparraison.setCentralWidget(self.centralwidget)
         self.statusbar = QtGui.QStatusBar(XConparraison)
         self.statusbar.setObjectName(_fromUtf8("statusbar"))
         XConparraison.setStatusBar(self.statusbar)
 
         self.retranslateUi(XConparraison)
-        QtCore.QObject.connect(self.leftInput, QtCore.SIGNAL(_fromUtf8("returnPressed()")), self.getLeftWorkBook)
-        QtCore.QObject.connect(self.rightInput, QtCore.SIGNAL(_fromUtf8("returnPressed()")), self.getRightWorkBook)
-        QtCore.QObject.connect(self.leftSelect, QtCore.SIGNAL(_fromUtf8("activated(QString)")), self.showLeftSheet)
-        QtCore.QObject.connect(self.rightSelect, QtCore.SIGNAL(_fromUtf8("activated(QString)")), self.showRightSheet)
-        QtCore.QObject.connect(self.CmpValue, QtCore.SIGNAL(_fromUtf8("clicked()")), self.compareValue)
-        QtCore.QObject.connect(self.CmpFormula, QtCore.SIGNAL(_fromUtf8("clicked()")), self.compareFormula)
+        self.leftInput.returnPressed.connect(self.getLeftWorkBook)
+        self.leftBrowse.clicked.connect(self.getLeftFile)
+        self.rightInput.returnPressed.connect(self.getRightWorkBook)
+        self.rightBrowse.clicked.connect(self.getRightFile)
+        self.leftSelect.activated.connect(self.showLeftSheet)
+        self.rightSelect.activated.connect(self.showRightSheet)
+        self.CmpValue.clicked.connect(self.compareValue)
+        self.CmpFormula.clicked.connect(self.compareFormula)
         QtCore.QMetaObject.connectSlotsByName(XConparraison)
 
     def getLeftWorkBook(self):
         self.left = self.getWorkBook(str(self.leftInput.text()))
         self.leftSelect.clear()
         self.leftSelect.addItems(self.left.keys())
+        self.showLeftSheet()
+
+    def getLeftFile(self):
+        fname = QtGui.QFileDialog.getOpenFileName(self.centralwidget, 'Open file',
+                                            os.getcwd(), "Excel files (*.xls*)")
+        self.leftInput.setText(str(fname))
+        self.getLeftWorkBook()
 
     def getRightWorkBook(self):
         self.right = self.getWorkBook(str(self.rightInput.text()))
         self.rightSelect.clear()
         self.rightSelect.addItems(self.right.keys())
+        self.showRightSheet()
+
+    def getRightFile(self):
+        fname = QtGui.QFileDialog.getOpenFileName(self.centralwidget, 'Open file',
+                                            os.getcwd(), "Excel files (*.xls*)")
+        self.rightInput.setText(str(fname))
+        self.getRightWorkBook()
 
     def getWorkBook(self, input):
         wb = read_excel(input, header=None, sheetname=None)
@@ -150,7 +173,9 @@ class Ui_XConparraison(object):
 
     def retranslateUi(self, XConparraison):
         XConparraison.setWindowTitle(_translate("XConparraison", "XConparraison", None))
-        self.CmpValue.setText(_translate("XConparraison", "Compare Value", None))
+        self.leftBrowse.setText(_translate("Xconparraison", "...", None))
+        self.rightBrowse.setText(_translate("Xconparraison", "...", None))
+        self.CmpValue.setText(_translate("XConparraison", "Compare Values", None))
         self.CmpFormula.setText(_translate("XConparraison", "Compare Formula", None))
 
 
@@ -167,11 +192,9 @@ class CompareDelegate(QtGui.QItemDelegate):
         if option.state & (self.mask is not None):
             if self.mask.iloc[index.row(), index.column()] == False:
                 painter.setBrush(QtGui.QBrush(Qt.red))
-        else:
-            painter.setBrush(QtGui.QBrush(Qt.white))
         painter.drawRect(option.rect)
 
-        # # set text color
+        # set text color
         painter.setPen(QtGui.QPen(Qt.black))
 
         painter.restore()
@@ -185,15 +208,15 @@ class PandasModel(QtCore.QAbstractTableModel):
         self.header = header
 
     def rowCount(self, *args, **kwargs):
-        return len(self._data.values)
+        return len(self._data.index)
 
     def columnCount(self, *args, **kwargs):
         return self._data.columns.size
 
     def data(self, index, role=Qt.DisplayRole):
-        if index.isValid:
+        if index.isValid():
             if role == Qt.DisplayRole:
-                return QtCore.QVariant(self._data.values[index.row()][index.column()])
+                return QtCore.QVariant(self._data.iloc[index.row(), index.column()])
         return QtCore.QVariant()
 
     def headerData(self, i, orientation, role):
