@@ -62,6 +62,7 @@
 
 \usepackage{amsmath}
 \usepackage{amssymb}
+\usepackage{graphicx}
 %----------------------------------------------------------------------------------------
 %	TITLE SECTION
 %----------------------------------------------------------------------------------------
@@ -73,6 +74,7 @@
 \title{Pricing with imperfect collateral} % Article title
 \author{%
 \textsc{Chen Xu} \\%\thanks{A thank you or further information} \\[1ex] % Your name
+% \normalsize Barclays Singapore, QA Macro Rates \\ % Your institution
 \normalsize %\href{mailto:john@smith.com}{john@smith.com} % Your email address
 %\and % Uncomment if 2 authors are required, duplicate these 4 lines if more
 %\textsc{Jane Smith}\thanks{Corresponding author} \\[1ex] % Second author's name
@@ -82,7 +84,7 @@
 \date{\today} % Leave empty to omit a date
 \renewcommand{\maketitlehookd}{%
 \begin{abstract}
-\noindent Swaps cleared at LCH are daily margined under OIS rate. However OIS markets don't exist in certain currency markets. Hence PV of such swaps at LCH use different discounting curves (e.g. SOR6M for SGD). This note explores the valuation impact under Black-Scholes of using discounting curve other than the curve of the corresponding collateral remuneration rate.  %\blindtext % Dummy abstract text - replace \blindtext with your abstract text
+\noindent Swaps cleared at LCH are daily margined under OIS rate. However OIS markets don't exist in certain currency markets. Hence PV of such swaps at LCH use different discounting curves (e.g. SOR6M for SGD). This note shows that the valuation impact of using discounting curve other than the curve of the corresponding collateral remuneration rate is relatively small under Black-Scholes.  %\blindtext % Dummy abstract text - replace \blindtext with your abstract text
 \end{abstract}
 }
 
@@ -99,7 +101,7 @@
 
 \section{Introduction}
 
-\lettrine[nindent=0em,lines=3]{P} iterbarg\cite{Piterbarg:2010} discussed derivative pricing under fully collateralized and uncollateralized case. Singapore Dollar(SGD) swaps cleared at LCH are remunerated at OIS rate. However OIS derivative market doesn't exist for SGD (there's no OIS curve), Mark-to-Market at LCH of these swaps are discounted using SOR6M curve. This disconnection of margin calculation versus the actual collateral remuneration operation turns out to have secondary effect on the valuation. 
+\lettrine[nindent=0em,lines=3]{D}erivative pricing under fully collateralized and uncollateralized case are discussed in Piterbarg\cite{Piterbarg:2010}. It is known that the collateral remuneration rate is the equivalent risk free rate used in the valuation as well as daily mark-to-market discounting. For example, most swaps cleared at LCH are remunerated at OIS rate and OIS curve is used in daily PV calculation. However OIS derivative market doesn't exist for SGD (there's no OIS curve), mark-to-market at LCH of these swaps are discounted using SOR6M curve. These is a clear disconnection of margin discounting calculation versus the actual collateral remuneration operation. 
 
 %\blindtext % Dummy text
 
@@ -133,17 +135,17 @@ in the measure in which the underlying asset grows at rate $r_{R}(t)-r_{D}(t)$.
 
 $\blacksquare$ When $C(t) = 0$, the value of the derivative:
 \begin{align*}
-V(t) = E_t [ e^{-\int_t^T(r_{F}(u) du)}V(T)]
+V(t) = V_{F}(t) := E_t [ e^{-\int_t^T(r_{F}(u) du)}V(T)]
 \end{align*}
 
 $\blacksquare$ When $C(t) = V(t)$, the value of the derivative:
 \begin{align*}
-V(t) = E_t [ e^{-\int_t^T(r_{C}(u) du)}V(T)]
+V(t) = V_{C}(t) := E_t [ e^{-\int_t^T(r_{C}(u) du)}V(T)]
 \end{align*}
 
-$\blacksquare$ Let's consider the collateral is valued using a different discounting curve $r_{M}(t)$, i.e.:
+$\blacksquare$ Let's consider the case where collaterals are valued under a different discounting curve $r_{M}(t)$, i.e.:
 \begin{align*}
-C(t) = E_t [ e^{-\int_t^T(r_{M}(u) du)}V(T)]
+C(t) = V_{M}(t) := E_t [ e^{-\int_t^T(r_{M}(u) du)}V(T)]
 \end{align*}
 
 Hence the valuation PDE becomes:
@@ -156,27 +158,30 @@ Define $\alpha(t)$ and $Z(t) = V(t)+\alpha(t)C(t)$ such that:
 \begin{align*}
 dZ(t) = r_{F}(t) Z(t) dt
 \end{align*}
-This means 
+Applying Ito, this new portfolio follows:
 \begin{align*}
 &\frac{dZ(t)}{dt} = r_{F}(t)V(t) - (r_{F}(t)-r_{C}(t))C(t) \\
 &+ \alpha(t)r_{M}(t)C(t) +  \frac{d\alpha(t)}{dt}C(t) \\
 &= r_{F}(t)(V(t)+\alpha(t)C(t))
 \end{align*}
-We have:
+We obtain the condition of $\alpha(t)$ for such portfolio to exist:
 \begin{align*}
-\frac{d\alpha(t)}{dt} + (r_{M}(t)-r_{F}(t)) \alpha(t) + r_{C}(t)-r_{F}(t) = 0
+\frac{d\alpha(t)}{dt} - (r_{F}(t)-r_{M}(t)) \alpha(t) - r_{F}(t)-r_{C}(t)=0
 \end{align*}
 
-We can choose:
+We can choose so that $\alpha(T)=0$:
 \begin{align*}
-\alpha(s) = \frac{r_{F}(s)-r_{C}(s)}{r_{M}(s)-r_{F}(s)}(1-e^{-\int_t^s (r_{M}(u)-r_{F}(u))du})
+\alpha(t)=\int_T^t e^{\int_s^t (r_{F}(u)-r_{M}(u))du} (r_{F}(s)-r_{C}(s))ds
+% \alpha(s) = \frac{r_{F}(s)-r_{C}(s)}{r_{M}(s)-r_{F}(s)}(1-e^{-\int_t^s (r_{M}(u)-r_{F}(u))du})
 \end{align*}
-Hence:
+
+Hence the PV of the derivative contract becomes:
 \begin{align*}
 V(t)& = E_t[ e^{-\int_t^T(r_{F}(u) du)}V(T)(1+\alpha(T))] \\
 &- \alpha(t)E_t [ e^{-\int_t^T(r_{M}(u) du)}V(T)] \\
-=& E_t[V(T) ( \frac{r_{F}(s)-r_{C}(s)}{r_{F}(s)-r_{M}(s)} e^{-\int_t^T(r_{M}(u) du} \\
-&- \frac{r_{M}(s)-r_{C}(s)}{r_{F}(s)-r_{M}(s)} e^{-\int_t^T(r_{F}(u) du})]
+% =& E_t[V(T) ( \frac{r_{F}(s)-r_{C}(s)}{r_{F}(s)-r_{M}(s)} e^{-\int_t^T(r_{M}(u) du} \\
+% &- \frac{r_{M}(s)-r_{C}(s)}{r_{F}(s)-r_{M}(s)} e^{-\int_t^T(r_{F}(u) du})]
+&=V_{F}(t)-\alpha(t) V_{M}(t)
 \end{align*}
 
 % \begin{itemize}
@@ -194,7 +199,7 @@ V(t)& = E_t[ e^{-\int_t^T(r_{F}(u) du)}V(T)(1+\alpha(T))] \\
 
 %------------------------------------------------
 
-\section{Results}
+% \section{Results}
 
 % \begin{table}
 % \caption{Example table}
@@ -211,27 +216,53 @@ V(t)& = E_t[ e^{-\int_t^T(r_{F}(u) du)}V(T)(1+\alpha(T))] \\
 % \end{tabular}
 % \end{table}
 
-\blindtext % Dummy text
+% \blindtext % Dummy text
 
-\begin{equation}
-\label{eq:emc}
-e = mc^2
-\end{equation}
+% \begin{equation}
+% \label{eq:emc}
+% e = mc^2
+% \end{equation}
 
-\blindtext % Dummy text
+% \blindtext % Dummy text
 
 %------------------------------------------------
 
 \section{Discussion}
 
-\subsection{Subsection One}
+% \subsection{Subsection One}
 
-A statement requiring citation %\cite{Figueredo:2009dg}.
-\blindtext % Dummy text
+% A statement requiring citation %\cite{Figueredo:2009dg}.
+% \blindtext % Dummy text
 
-\subsection{Subsection Two}
+% \subsection{Subsection Two}
 
-\blindtext % Dummy text
+% \blindtext % Dummy text
+
+$\blacksquare$ When $r_{M}(t) \xrightarrow{\forall t} \infty$, $\alpha(t) \xrightarrow{\forall t} 0$; hence $V(t) \xrightarrow{\forall t} V_{F}(t)$. This means that the mark-to-market of the collateral is always 0. This is equivalent of saying that the trade is actually uncollateralized: $V(t) = V_{F}(t)$. \\
+$\blacksquare$ When $r_{M} = r_{C}$, $\alpha(t) = e^{\int_t^T -(r_{F}(s)-r_{C}(s))ds}-1$; hence $V(t) = V_{M}(t) = V_{C}(t)$. This means that the derivative is fully collateralized and its collateral PV is properly discounted at the remuneration rate: $V(t) = V_{C}(t)$. \\
+$\blacksquare$ When $r_{M} = r_{F}$, $\alpha(t) = \int_T^t (r_{F}(s)-r_{C}(s))ds$; hence $V(t) = V_{F}(t) (1+\int_t^T (r_{F}(s)-r_{C}(s))ds)$.\\
+
+$\blacksquare$ Assuming $r_{i}(t)$ is constant through time, we have $\alpha(t)=\frac{r_{F}-r_{C}}{r_{F}-r_{M}}(e^{-(r_{F}-r_{M})(T-t)}-1)$ when $r_{F} \neq r_{M}$.
+
+
+$\square$ When $r_{M}$ in neighbourhood of $r_{F}$: $r_{M}=r_{F}+\delta r$. So $\alpha(t)=\frac{r_{F}-r_{C}}{\delta r}(e^{-\delta r(T-t)}-1)$. We have:
+\begin{align*}
+V(t) &= V_{F}(t) + V_{M}(t) (r_{F}-r_{C})\frac{1-e^{-\delta r(T-t)}}{\delta r}\\
+&= V_{F} (1+e^{-\delta r(T-t)}(r_{F}-r_{C})\frac{1-e^{-\delta r(T-t)}}{\delta r})\\
+&= V_{F} (1+(r_{F}-r_{C})(T-t)+\Theta(\delta))\\
+&= V_{C}\frac{(1+(r_{F}-r_{C})(T-t)+\Theta(\delta))}{e^{(r_{F}-r_{C})(T-t)}}
+\end{align*}
+When $p=(r_{F}-r_{C})(T-t) \approx 1$ (say Libor3M-OIS basis is around 40bps and maturity is 5Y, $p=0.02 \ll 1$). We have:
+$$V(t) = V_{C} (1+ \Theta(p+\delta r)).$$
+This implies that $V(t)$ is pretty much dominated, in zero-th order, by the collateral remuneration rate $r_{C}$; while the MtM discounting rate $r_{M}$ has a first oder (even second order given $\delta r \ll p$) to the valuation of the derivative contract.
+
+$\square$ Numerical illustration \ref{fig:Vm}: $r_{C}=2\%, r_{F}=2.5\%, t=0, T=5, V(T)=100.$
+\begin{figure}
+  \includegraphics[width=\linewidth]{figure_1.png}
+  \caption{$V(t)$ in function of $r_{M}$}
+  \label{fig:Vm}
+ \end{figure}
+
 
 %----------------------------------------------------------------------------------------
 %	REFERENCE LIST
@@ -242,7 +273,7 @@ A statement requiring citation %\cite{Figueredo:2009dg}.
 \bibitem{Piterbarg:2010}
 Piterbarg, V. (2010).
 \newblock Funding beyond discounting: collateral agreements and derivatives pricing.\\
-\newblock {\em Cutting edge, AsiaRisk, March}
+\newblock {\em Cutting edge, AsiaRisk, March 2010}
  
 \end{thebibliography}
 
