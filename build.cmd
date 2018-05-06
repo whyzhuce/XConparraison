@@ -1,0 +1,1 @@
+python D:\MyDev\Python\User\Lib\site-packages\PyQt4\uic\pyuic.py -x xconparraison_gui.ui -o xconparraison_gui.py
